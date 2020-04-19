@@ -53,7 +53,7 @@ namespace SmoothConfig.Api.Services
 
             var jwt = CreateJwt(user);
 
-            //_userRefreshTokensRepository.SaveRefreshToken(jwt.RefreshToken, user.Id, jwt.ExpiresIn);
+            _userRepository.SaveToken(user.Id, jwt.AccessToken, jwt.RefreshToken, jwt.ExpiresIn);
 
             return jwt;
         }

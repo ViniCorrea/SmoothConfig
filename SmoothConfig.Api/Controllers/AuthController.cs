@@ -37,5 +37,9 @@ namespace SmoothConfig.Api.Controllers
 
             return Ok(new { jwt });
         }
+
+        [HttpGet]
+        [Authorize]
+        public string Authenticated() => $"{User.Identity.Name}";
     }
 }

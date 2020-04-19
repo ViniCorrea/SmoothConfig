@@ -11,8 +11,7 @@ namespace SmoothConfig.Api.Model
     public class User
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public ObjectId Id { get; set; }
 
         [BsonElement("username")]
         public string UserName { get; set; }
@@ -20,5 +19,8 @@ namespace SmoothConfig.Api.Model
         [BsonElement("password")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        [BsonElement("access_token")]
+        public AccessToken AccessToken { get; set; }
     }
 }
