@@ -10,6 +10,11 @@ namespace SmoothConfig.Api.Model
 {
     public class User
     {
+        public User()
+        {
+            AccessToken = new AccessToken();
+        }
+
         [BsonId]
         public ObjectId Id { get; set; }
 

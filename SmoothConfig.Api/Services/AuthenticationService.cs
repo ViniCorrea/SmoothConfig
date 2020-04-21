@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SmoothConfig.Api.Core.Lib;
 using SmoothConfig.Api.Dto;
 using SmoothConfig.Api.Model;
 using SmoothConfig.Api.Repositories;
@@ -20,12 +21,14 @@ namespace SmoothConfig.Api.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _config;
+        private readonly IPasswordHasher _passwordHasher;
         private readonly double _expirationTokenIn;
 
-        public AuthenticationService(IConfiguration configuration, IUserRepository userRepository)
+        public AuthenticationService(IConfiguration configuration, IUserRepository userRepository, IPasswordHasher passwordHasher)
         {
             _userRepository = userRepository;
             _config = configuration;
+            _passwordHasher = passwordHasher;
 
             double expireIn;
             if (!double.TryParse(_config["Jwt:ExpirationTime"], out expireIn))
@@ -40,15 +43,23 @@ namespace SmoothConfig.Api.Services
         /// <summary>
         /// Authentication
         /// </summary>
-        /// <param name="login">Email and Password</param>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
         /// <returns>JWT</returns>
         public JsonWebTokenDto Login(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return null;
 
-            var user = _userRepository.GetUserByUsernameAndPassword(username, password);
+            var user = _userRepository.GetUserByUsername(username);
+
+            // Check if user exists
             if (user is null)
+                return null;
+
+            // Check password
+            (bool verified, bool needsUpgrade) = _passwordHasher.Check(user.Password, password);
+            if (!verified)
                 return null;
 
             var jwt = CreateJwt(user);

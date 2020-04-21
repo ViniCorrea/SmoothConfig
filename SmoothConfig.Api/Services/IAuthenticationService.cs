@@ -9,6 +9,6 @@ namespace SmoothConfig.Api.Services
     public interface IAuthenticationService
     {
         JsonWebTokenDto Login(string username, string password);
-        JsonWebTokenDto Refresh(string accessToken, string refreshToken)
+        JsonWebTokenDto Refresh(string accessToken, string refreshToken);
     }
 }

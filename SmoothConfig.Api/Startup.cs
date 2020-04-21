@@ -15,6 +15,10 @@ using System.Text;
 using Microsoft.IdentityModel.Logging;
 using SmoothConfig.Api.Repositories;
 using SmoothConfig.Api.Services;
+using SmoothConfig.Api.Controllers;
+using AutoMapper;
+using SmoothConfig.Api.MappingProfile;
+using SmoothConfig.Api.Core.Lib;
 
 namespace SmoothConfig.Api
 {
@@ -75,6 +79,14 @@ namespace SmoothConfig.Api
                 };
             });
 
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+            services.AddAutoMapper(typeof(Startup));
+            //services.AddSingleton(provider => new MapperConfiguration(cfg =>
+            //{
+            //    cfg.AddProfile(new UserProfile(provider.GetService<IPasswordHasher>()));
+            //}).CreateMapper());
+
             RegisterServices(services);
             RegisterRepositories(services);
         }
@@ -82,6 +94,7 @@ namespace SmoothConfig.Api
         public void RegisterServices(IServiceCollection services)
         {
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         public void RegisterRepositories(IServiceCollection services)

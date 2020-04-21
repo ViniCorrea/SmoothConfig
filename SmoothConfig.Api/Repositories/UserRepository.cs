@@ -19,6 +19,12 @@ namespace SmoothConfig.Api.Repositories
             return result;
         }
 
+        public User GetUserByUsername(string username)
+        {
+            var result = DataContext.User.Find(user => user.Username == username).SingleOrDefault<User>();
+            return result;
+        }
+
         public User GetUserByUsernameAndRefreshToken(string username, string refreshtoken)
         {
             var result = DataContext.User.Find(user => user.Username == username && user.AccessToken.RefreshToken == refreshtoken).SingleOrDefault<User>();
@@ -35,6 +41,11 @@ namespace SmoothConfig.Api.Repositories
 
             var result = DataContext.User.UpdateOne(filter, update);
             return result.ModifiedCount == 1;
+        }
+
+        public void NewUser(User user)
+        {
+            DataContext.User.InsertOne(user);
         }
     }
 }
