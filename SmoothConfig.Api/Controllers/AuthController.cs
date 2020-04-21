@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using SmoothConfig.Api.Services;
 using SmoothConfig.Api.ViewModel;
 
@@ -36,6 +37,30 @@ namespace SmoothConfig.Api.Controllers
             var jwt = _authenticationService.Login(loginViewModel.Username, loginViewModel.Password);
 
             return Ok(new { jwt });
+        }
+
+        /// <summary>
+        /// Keep the user authenticated
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <param name="refreshToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult Refresh(string accessToken, string refreshToken)
+        {
+            if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(accessToken))
+                return Unauthorized();
+
+            try
+            {
+                var jwt = _authenticationService.Refresh(accessToken, refreshToken);
+                return Ok(jwt);
+            }
+            catch (SecurityTokenException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
         }
 
         [HttpGet]

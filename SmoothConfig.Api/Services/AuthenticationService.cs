@@ -59,6 +59,29 @@ namespace SmoothConfig.Api.Services
         }
 
         /// <summary>
+        /// The access token has a expiration time, you can use the refresh token to create a new one
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <param name="refreshToken"></param>
+        /// <returns>JWT</returns>
+        /// <exception cref="SecurityTokenException">Invalid refresh token</exception>
+        public JsonWebTokenDto Refresh(string accessToken, string refreshToken)
+        {
+            var principal = GetPrincipalFromExpiredToken(accessToken);
+            var username = principal.Identity.Name;
+
+            var user = _userRepository.GetUserByUsernameAndRefreshToken(username, refreshToken);
+
+            if (user is null || user.AccessToken.RefreshToken != refreshToken)
+                throw new SecurityTokenException("Invalid refresh token");
+
+            var jwt = CreateJwt(user);
+
+            _userRepository.SaveToken(user.Id, jwt.AccessToken, jwt.RefreshToken, jwt.ExpiresIn);
+            return jwt;
+        }
+
+        /// <summary>
         /// Create the main object to return
         /// </summary>
         /// <param name="user"></param>
@@ -90,11 +113,11 @@ namespace SmoothConfig.Api.Services
             var options = new IdentityOptions();
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Email, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Email, user.Username),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(options.ClaimsIdentity.UserIdClaimType, user.Id.ToString()),
-                new Claim(options.ClaimsIdentity.UserNameClaimType, user.UserName),
+                new Claim(options.ClaimsIdentity.UserNameClaimType, user.Username),
                 //new Claim(ClaimTypes.Role, user.SuperUser ? Role.SuperUser : Role.Admin)
             };
 
@@ -124,6 +147,33 @@ namespace SmoothConfig.Api.Services
 
             rng.GetBytes(randomNumber);
             return Convert.ToBase64String(randomNumber);
+        }
+
+        /// <summary>
+        /// Reade the token and return a object with all information
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        /// <exception cref="SecurityTokenException">Invalid refresh token</exception>
+        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false, //you might want to validate the audience and issuer depending on your use case
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"])),
+                ValidateLifetime = false //here we are saying that we don't care about the token's expiration date
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken securityToken;
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Invalid token");
+
+            return principal;
         }
     }
 }

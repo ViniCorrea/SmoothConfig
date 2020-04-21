@@ -11,5 +11,6 @@ namespace SmoothConfig.Api.Repositories
     {
         User GetUserByUsernameAndPassword(string username, string password);
         bool SaveToken(ObjectId userId, string accessToken, string refreshToken, DateTime expiration);
+        User GetUserByUsernameAndRefreshToken(string username, string refreshtoken);
     }
 }

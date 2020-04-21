@@ -15,7 +15,13 @@ namespace SmoothConfig.Api.Repositories
 
         public User GetUserByUsernameAndPassword(string username, string password)
         {
-            var result = DataContext.User.Find(user => user.UserName == username && user.Password == password).SingleOrDefault<User>();
+            var result = DataContext.User.Find(user => user.Username == username && user.Password == password).SingleOrDefault<User>();
+            return result;
+        }
+
+        public User GetUserByUsernameAndRefreshToken(string username, string refreshtoken)
+        {
+            var result = DataContext.User.Find(user => user.Username == username && user.AccessToken.RefreshToken == refreshtoken).SingleOrDefault<User>();
             return result;
         }
 
