@@ -22,8 +22,12 @@ namespace SmoothConfig.Api.Controllers
             _userService = userService;
         }
 
+        [Authorize]
        public IActionResult SaveUser(CreateUserViewModel createUserViewModel)
         {
+            if (createUserViewModel is null)
+                return UnprocessableEntity();
+
             _userService.CreateUser(createUserViewModel);
             return Ok();
         }
