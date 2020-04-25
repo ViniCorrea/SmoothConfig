@@ -16,17 +16,42 @@ import {
   Pagination,
   PaginationItem,
   PaginationLink,
-  Row
+  Row,
+  Navbar,
+  NavbarBrand,
+  Collapse,
+  Nav,
+  NavItem,
+  NavLink
 } from 'reactstrap';
-
-// core components
-import ExamplesNavbar from "components/Navbars/ExamplesNavbar.js";
-import Footer from "components/Footer/Footer.js";
 
 const Tokens = () => {
   return (
     <>
-      <ExamplesNavbar />
+    <Navbar className="bg-transparent" expand="lg">
+      <Container>
+        <div className="navbar-translate">
+          <NavbarBrand href="#pablo" onClick={e => e.preventDefault()}>
+            SmoothConfig
+          </NavbarBrand>
+          <button className="navbar-toggler" aria-expanded={false}>
+            <span className="navbar-toggler-bar bar1" />
+            <span className="navbar-toggler-bar bar2" />
+            <span className="navbar-toggler-bar bar3" />
+          </button>
+        </div>
+        <Collapse navbar isOpen={false}>
+          <Nav className="ml-auto" navbar>
+            <NavItem>
+              <NavLink href="#pablo" onClick={e => e.preventDefault()}>
+                <i className="tim-icons icon-single-02" />
+                Vinicius Corrêa
+              </NavLink>
+            </NavItem>
+          </Nav>
+        </Collapse>
+      </Container>
+    </Navbar>
       <div className="wrapper">
         <Container className="top-bar">
           <Breadcrumb>
@@ -65,7 +90,7 @@ const Tokens = () => {
         </Container>
         <div className="main">
           <Container>
-            <Table responsive>
+            <Table>
               <thead>
                 <tr>
                   <th className="text-center">Token</th>
@@ -132,7 +157,6 @@ const Tokens = () => {
           </Row>
         </Container>
       </div>
-      <Footer />
     </>
   );
 };
