@@ -13,6 +13,7 @@ namespace SmoothConfig.Api.Model
         public User()
         {
             AccessToken = new AccessToken();
+            Roles = new List<string>();
         }
 
         [BsonId]
@@ -27,5 +28,8 @@ namespace SmoothConfig.Api.Model
 
         [BsonElement("access_token")]
         public AccessToken AccessToken { get; set; }
+
+        [BsonElement("roles")]
+        public List<string> Roles { get; set; }
     }
 }

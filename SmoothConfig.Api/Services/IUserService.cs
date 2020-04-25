@@ -1,4 +1,5 @@
-﻿using SmoothConfig.Api.ViewModel;
+﻿using FluentValidation.Results;
+using SmoothConfig.Api.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,6 @@ namespace SmoothConfig.Api.Services
 {
     public interface IUserService
     {
-        void CreateUser(CreateUserViewModel createUserViewModel);
+        ValidationResult CreateUser(CreateUserViewModel createUserViewModel);
     }
 }

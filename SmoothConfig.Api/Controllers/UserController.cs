@@ -28,7 +28,13 @@ namespace SmoothConfig.Api.Controllers
             if (createUserViewModel is null)
                 return UnprocessableEntity();
 
-            _userService.CreateUser(createUserViewModel);
+            var validation = _userService.CreateUser(createUserViewModel);
+
+            if (!validation.IsValid)
+            {
+                return BadRequest(validation) ;
+            }
+
             return Ok();
         }
     }
