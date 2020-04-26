@@ -122,15 +122,17 @@ namespace SmoothConfig.Api.Services
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var options = new IdentityOptions();
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Email, user.Username),
                 new Claim(JwtRegisteredClaimNames.Sub, user.Username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(options.ClaimsIdentity.UserIdClaimType, user.Id.ToString()),
-                new Claim(options.ClaimsIdentity.UserNameClaimType, user.Username),
-                //new Claim(ClaimTypes.Role, user.SuperUser ? Role.SuperUser : Role.Admin)
+                new Claim(options.ClaimsIdentity.UserNameClaimType, user.Username)
             };
+
+            // Adding roles in the payload
+            claims.AddRange(user.Roles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
 
             var token = new JwtSecurityToken(
                 issuer: jwtIssuer,

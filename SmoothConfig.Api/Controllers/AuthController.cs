@@ -66,5 +66,17 @@ namespace SmoothConfig.Api.Controllers
         [HttpGet]
         [Authorize]
         public string Authenticated() => $"{User.Identity.Name}";
+
+#if DEBUG
+        [HttpGet]
+        [Authorize]
+        public object Claims() => User.Claims.Select(c =>
+            new
+            {
+                Type = c.Type,
+                Value = c.Value
+            }
+        );
+#endif
     }
 }
