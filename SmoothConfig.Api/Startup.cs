@@ -19,6 +19,8 @@ using SmoothConfig.Api.Controllers;
 using AutoMapper;
 using SmoothConfig.Api.MappingProfile;
 using SmoothConfig.Api.Core.Lib;
+using FluentValidation.AspNetCore;
+using System.Reflection;
 
 namespace SmoothConfig.Api
 {
@@ -34,8 +36,11 @@ namespace SmoothConfig.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-                //.AddFluentValidation();
+            services.AddControllers()
+                .AddFluentValidation(opt =>
+                {
+                    opt.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+                });
             
             services.AddCors(options =>
             {
@@ -82,10 +87,6 @@ namespace SmoothConfig.Api
             services.AddScoped<IPasswordHasher, PasswordHasher>();
 
             services.AddAutoMapper(typeof(Startup));
-            //services.AddSingleton(provider => new MapperConfiguration(cfg =>
-            //{
-            //    cfg.AddProfile(new UserProfile(provider.GetService<IPasswordHasher>()));
-            //}).CreateMapper());
 
             RegisterServices(services);
             RegisterRepositories(services);

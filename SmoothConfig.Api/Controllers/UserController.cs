@@ -22,9 +22,19 @@ namespace SmoothConfig.Api.Controllers
             _userService = userService;
         }
 
+        [Authorize]
        public IActionResult SaveUser(CreateUserViewModel createUserViewModel)
         {
-            _userService.CreateUser(createUserViewModel);
+            if (createUserViewModel is null)
+                return UnprocessableEntity();
+
+            var validation = _userService.CreateUser(createUserViewModel);
+
+            if (!validation.IsValid)
+            {
+                return BadRequest(validation) ;
+            }
+
             return Ok();
         }
     }
