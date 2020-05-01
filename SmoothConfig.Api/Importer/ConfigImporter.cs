@@ -17,7 +17,7 @@ namespace SmoothConfig.Api.Importer
         /// Create object with XML loaded from file stream and close file stream
         /// </summary>
         /// <param name="documentStream">File stream of XML</param>
-        public ConfigImporter(Stream documentStream, string name)
+        public ConfigImporter(Stream documentStream)
         {
             _document = new XmlDocument();
             _document.Load(documentStream);
