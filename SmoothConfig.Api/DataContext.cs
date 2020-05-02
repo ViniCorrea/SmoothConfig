@@ -11,6 +11,7 @@ namespace SmoothConfig.Api
     public class DataContext
     {
         private readonly IMongoClient _client;
+        private readonly IMongoClient _config;
         public readonly IMongoDatabase Db = null;
 
         public DataContext(string connectionString, string dbname)
@@ -26,6 +27,16 @@ namespace SmoothConfig.Api
             get
             {
                 return Db.GetCollection<User>("User");
+            }
+        }
+
+        public IMongoClient GetConfig() => _config;
+
+        public IMongoCollection<Config> Config
+        {
+            get 
+            {
+                return Db.GetCollection<Config>("Config");
             }
         }
     }
