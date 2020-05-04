@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SmoothConfig.Api.Importer;
+using SmoothConfig.Api.Repositories;
 using SmoothConfig.Api.Services;
 using SmoothConfig.Api.ViewModel;
 
@@ -16,6 +17,12 @@ namespace SmoothConfig.Api.Controllers
     [ApiController]
     public class ImporterController : ControllerBase
     {
+        private readonly IImporterService _importerService;
+
+        public ImporterController(IImporterService importerService)
+        {
+            _importerService = importerService;
+        }
 
         [HttpPost]
         [Authorize]
@@ -36,7 +43,18 @@ namespace SmoothConfig.Api.Controllers
             {
                 FileDownloadName = file.FileName
             };
+        }
 
+        [HttpPost]
+        [Authorize]
+        public IActionResult ImportConfig([FromForm] ImportConfigViewModel importConfigViewModel)
+        {
+            if (importConfigViewModel is null)
+                return UnprocessableEntity();
+
+            _importerService.ImportConfig(importConfigViewModel);
+
+            return Ok();
         }
     }
 }
