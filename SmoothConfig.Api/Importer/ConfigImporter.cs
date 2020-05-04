@@ -44,11 +44,12 @@ namespace SmoothConfig.Api.Importer
 
             foreach (XmlNode node in nodes)
             {
-                _settings.Add(new Setting { Name = node.Name });
-                var father = _settings.Where(x => x.Name == node.Name).FirstOrDefault();
 
-                ReadAllAttributes(node, father);
-                ReadChildNodes(node, father);
+                var settings = new Setting { Name = node.Name };
+                _settings.Add(settings);
+
+                ReadAllAttributes(node, settings);
+                ReadChildNodes(node, settings);
             }
         }
 
@@ -95,11 +96,11 @@ namespace SmoothConfig.Api.Importer
 
             foreach (XmlNode n in nodes)
             {
-                settingFather.Childrens.Add(new Setting { Name = n.Name });
-                var newFather = settingFather.Childrens.Where(x => x.Name == n.Name).FirstOrDefault();
+                var settings = new Setting { Name = n.Name };
+                settingFather.Childrens.Add(settings);
 
-                ReadAllAttributes(n, newFather);
-                ReadChildNodes(n, newFather);
+                ReadAllAttributes(n, settings);
+                ReadChildNodes(n, settings);
             }
         }
     }
